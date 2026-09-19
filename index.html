@@ -4,30 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Looksmax Score Calculator — Evidence-Led Self-Assessment | looksmaxxing.guide</title>
-  <meta name="description" content="Calibrated 6-category looksmax self-assessment calculator with weighted scoring and evidence-led harm-reduction action plan.">
+  <meta name="description" content="Calibrated 6-category looksmax self-assessment calculator with weighted scoring, real-time radar breakdown, and evidence-led harm-reduction action plan.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0b0e14;
-      --bg-card: #131722;
-      --bg-card-hover: #1a2030;
-      --bg-input: #1e2436;
-      --border: #262f45;
-      --accent: #D19C14;
-      --accent-glow: rgba(209, 156, 20, 0.25);
-      --accent-fitness: #E5443B;
-      --accent-style: #9B59B6;
-      --accent-money: #27AE60;
+      --bg-base: #080a0f;
+      --bg-surface: #0e121a;
+      --bg-card: rgba(18, 23, 34, 0.75);
+      --bg-card-elevated: #161c2b;
+      --bg-input: #121724;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(209, 156, 20, 0.5);
+      
+      --accent-gold: #D19C14;
+      --accent-gold-glow: rgba(209, 156, 20, 0.25);
+      --accent-red: #E5443B;
+      --accent-purple: #9B59B6;
+      --accent-green: #27AE60;
       --accent-blue: #3498DB;
+      --accent-orange: #E67E22;
       --accent-teal: #16A085;
-      --text-main: #f0f3fa;
-      --text-muted: #8b98b5;
-      --text-dim: #5c6882;
-      --danger: #ff4757;
-      --warning: #ffa502;
-      --success: #2ed573;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
     }
 
     * {
@@ -37,29 +43,80 @@
     }
 
     body {
-      background-color: var(--bg-dark);
+      background-color: var(--bg-base);
       color: var(--text-main);
-      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       line-height: 1.6;
-      padding: 0;
-      overflow-x: hidden;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
     }
 
+    /* Ambient Background Glows */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-orb-1 {
+      position: absolute;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(209, 156, 20, 0.12) 0%, rgba(14, 18, 26, 0) 70%);
+      filter: blur(80px);
+    }
+
+    .ambient-orb-2 {
+      position: absolute;
+      bottom: 20%;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(22, 160, 133, 0.08) 0%, rgba(14, 18, 26, 0) 70%);
+      filter: blur(90px);
+    }
+
+    /* Top Safety Banner */
+    .top-banner {
+      position: relative;
+      z-index: 10;
+      background: linear-gradient(90deg, rgba(209, 156, 20, 0.15) 0%, rgba(22, 160, 133, 0.12) 100%);
+      border-bottom: 1px solid rgba(209, 156, 20, 0.25);
+      padding: 0.65rem 1.5rem;
+      font-size: 0.825rem;
+      color: #f1dfa8;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .top-banner strong {
+      color: #fff;
+    }
+
+    /* Header */
     header {
-      background: rgba(11, 14, 20, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 100;
+      background: rgba(8, 10, 15, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
       padding: 0.85rem 1.5rem;
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -69,404 +126,539 @@
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.75rem;
       text-decoration: none;
-      font-family: 'Dosis', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: 0.5px;
+      color: #fff;
     }
 
-    .logo-badge {
-      background: var(--accent);
-      color: #0b0e14;
-      font-size: 0.7rem;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .nav-tagline {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      display: none;
-    }
-
-    @media (min-width: 768px) {
-      .nav-tagline { display: block; }
-    }
-
-    .harm-reduction-banner {
-      background: linear-gradient(90deg, rgba(209, 156, 20, 0.12), rgba(22, 160, 133, 0.1));
-      border-bottom: 1px solid rgba(209, 156, 20, 0.25);
-      padding: 0.6rem 1.5rem;
-      font-size: 0.825rem;
-      color: #e2c069;
-      text-align: center;
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #D19C14, #916806);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      color: #080a0f;
+      box-shadow: 0 0 15px var(--accent-gold-glow);
     }
 
-    .container {
-      max-width: 1100px;
-      margin: 2rem auto;
+    .logo-text {
+      font-family: 'Dosis', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.25px;
+    }
+
+    .logo-text span {
+      color: var(--accent-gold);
+    }
+
+    .header-badge {
+      background: rgba(209, 156, 20, 0.12);
+      border: 1px solid rgba(209, 156, 20, 0.3);
+      color: var(--accent-gold);
+      font-size: 0.725rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 2.5rem auto 4rem;
       padding: 0 1.5rem;
       flex: 1;
     }
 
-    .hero-heading {
+    /* Hero Headline */
+    .hero-head {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.75rem;
     }
 
-    .hero-heading h1 {
-      font-size: 2.25rem;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent-gold);
+      background: rgba(209, 156, 20, 0.1);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      margin-bottom: 0.85rem;
+      border: 1px solid rgba(209, 156, 20, 0.2);
+    }
+
+    .hero-head h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3rem);
       font-weight: 700;
       color: #ffffff;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.75px;
     }
 
-    .hero-heading h1 span {
-      color: var(--accent);
+    .hero-head h1 span {
+      background: linear-gradient(135deg, #f3ca65 0%, #D19C14 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .hero-heading p {
+    .hero-head p {
       color: var(--text-muted);
       font-size: 1.05rem;
       max-width: 680px;
-      margin: 0 auto;
+      margin: 0 auto 1.5rem;
     }
 
-    .calc-layout {
+    /* Preset Quick Bar */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .preset-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 0.25rem;
+    }
+
+    .preset-btn {
+      background: var(--bg-card-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.45rem 0.95rem;
+      border-radius: 8px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      background: rgba(209, 156, 20, 0.15);
+      border-color: var(--accent-gold);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Two Column Layout */
+    .calculator-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 2rem;
-      margin-bottom: 3rem;
+      align-items: start;
     }
 
-    @media (min-width: 900px) {
-      .calc-layout {
+    @media (min-width: 960px) {
+      .calculator-grid {
         grid-template-columns: 1.35fr 1fr;
-        align-items: start;
+        gap: 2.5rem;
       }
     }
 
-    .sliders-card {
+    /* Sliders Card */
+    .panel-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
     }
 
-    .sliders-header {
+    .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .sliders-header h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
       color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
 
-    .reset-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 0.3rem 0.75rem;
+    .panel-badge {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      padding: 0.2rem 0.5rem;
       border-radius: 6px;
-      font-size: 0.8rem;
-      font-family: inherit;
-      cursor: pointer;
+    }
+
+    /* Category Sliders */
+    .pillar-row {
+      margin-bottom: 2rem;
       transition: all 0.2s ease;
     }
 
-    .reset-btn:hover {
-      background: var(--bg-input);
-      color: var(--text-main);
-      border-color: var(--text-muted);
-    }
-
-    .category-group {
-      margin-bottom: 1.75rem;
-    }
-
-    .category-group:last-child {
+    .pillar-row:last-child {
       margin-bottom: 0.5rem;
     }
 
-    .cat-meta {
+    .pillar-meta {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.4rem;
+      align-items: center;
+      margin-bottom: 0.6rem;
     }
 
-    .cat-name {
-      font-weight: 600;
-      font-size: 0.95rem;
+    .pillar-title {
+      font-weight: 700;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .cat-weight {
-      font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.07);
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      color: var(--text-muted);
+    .pillar-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px currentColor;
     }
 
-    .cat-score-display {
+    .pillar-weight-tag {
+      font-size: 0.725rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .pillar-val-box {
+      display: flex;
+      align-items: baseline;
+      gap: 0.15rem;
+    }
+
+    .pillar-val {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--accent);
-      min-width: 2.5rem;
+      font-size: 1.35rem;
+      color: #ffffff;
+      min-width: 2.25rem;
       text-align: right;
     }
 
-    .slider-container {
+    .pillar-max {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* Custom Range Slider */
+    .slider-wrap {
       position: relative;
+      display: flex;
+      align-items: center;
+      margin: 0.4rem 0;
     }
 
     input[type="range"] {
-      width: 100%;
       -webkit-appearance: none;
       appearance: none;
-      height: 8px;
-      border-radius: 4px;
+      width: 100%;
+      height: 10px;
+      border-radius: 9999px;
       background: var(--bg-input);
       outline: none;
-      transition: background 0.2s;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-      border: 2px solid #0b0e14;
-      box-shadow: 0 0 10px var(--accent-glow);
-      transition: transform 0.1s;
+      background: #ffffff;
+      border: 3px solid var(--accent-gold);
+      box-shadow: 0 0 12px rgba(209, 156, 20, 0.5);
+      cursor: grab;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
+    input[type="range"]::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.25);
     }
 
     input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-      border: 2px solid #0b0e14;
-      box-shadow: 0 0 10px var(--accent-glow);
-      transition: transform 0.1s;
+      background: #ffffff;
+      border: 3px solid var(--accent-gold);
+      box-shadow: 0 0 12px rgba(209, 156, 20, 0.5);
+      cursor: grab;
     }
 
-    .cat-descriptor {
-      font-size: 0.8rem;
+    .descriptor-box {
+      font-size: 0.825rem;
       color: var(--text-muted);
-      margin-top: 0.35rem;
-      min-height: 1.4rem;
+      margin-top: 0.45rem;
+      padding: 0.4rem 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 0 6px 6px 0;
+      min-height: 2.4rem;
+      display: flex;
+      align-items: center;
+      line-height: 1.4;
+      transition: all 0.2s ease;
     }
 
-    /* Score Result Card */
-    .result-card {
+    /* Result Sticky HUD */
+    .hud-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
       position: sticky;
-      top: 5rem;
+      top: 5.5rem;
     }
 
-    .score-meter {
+    .hud-header {
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .hud-subtitle {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    /* Circular SVG Gauge */
+    .radial-gauge-wrap {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      margin: 0.5rem auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 14;
+    }
+
+    .gauge-progress {
+      fill: none;
+      stroke: var(--accent-gold);
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 534;
+      stroke-dashoffset: 534;
+      transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+      filter: drop-shadow(0 0 8px var(--accent-gold-glow));
+    }
+
+    .gauge-center-data {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin: 1rem 0 1.5rem;
-      position: relative;
-    }
-
-    .radial-svg {
-      width: 190px;
-      height: 190px;
-      transform: rotate(-90deg);
-    }
-
-    .radial-bg {
-      fill: none;
-      stroke: var(--bg-input);
-      stroke-width: 14;
-    }
-
-    .radial-progress {
-      fill: none;
-      stroke: var(--accent);
-      stroke-width: 14;
-      stroke-linecap: round;
-      stroke-dasharray: 502;
-      stroke-dashoffset: 502;
-      transition: stroke-dashoffset 0.4s ease, stroke 0.4s ease;
-    }
-
-    .meter-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       text-align: center;
     }
 
-    .meter-value {
-      font-size: 3.25rem;
-      font-weight: 700;
+    .gauge-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.75rem;
+      font-weight: 800;
+      line-height: 0.9;
       color: #ffffff;
-      line-height: 1;
-      font-family: 'Dosis', sans-serif;
+      letter-spacing: -1.5px;
     }
 
-    .meter-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    .tier-badge {
-      display: inline-block;
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .gauge-denominator {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 0.35rem;
       font-weight: 600;
-      text-align: center;
-      margin: 0 auto 1.25rem;
-      background: rgba(209, 156, 20, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(209, 156, 20, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .breakdown-bars {
+    .tier-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      letter-spacing: 0.25px;
+      margin-bottom: 1.5rem;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    /* Bottleneck Alert */
+    .bottleneck-callout {
+      background: rgba(229, 68, 59, 0.08);
+      border: 1px solid rgba(229, 68, 59, 0.25);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+
+    .bottleneck-label {
       display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin: 1rem 0 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ff7675;
+      text-transform: uppercase;
+      letter-spacing: 0.75px;
+      margin-bottom: 0.25rem;
     }
 
-    .bar-row {
+    .bottleneck-text {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    /* Radar / Equalizer Bars */
+    .equalizer-wrap {
+      margin-bottom: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .eq-row {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      margin-bottom: 0.6rem;
       font-size: 0.8rem;
     }
 
-    .bar-label {
+    .eq-name {
       width: 110px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: var(--text-muted);
+      font-weight: 500;
     }
 
-    .bar-track {
+    .eq-track {
       flex: 1;
-      height: 6px;
-      background: var(--bg-input);
-      border-radius: 3px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 9999px;
       overflow: hidden;
     }
 
-    .bar-fill {
+    .eq-fill {
       height: 100%;
-      background: var(--accent);
-      width: 60%;
-      border-radius: 3px;
-      transition: width 0.3s ease;
+      border-radius: 9999px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .bar-val {
-      width: 28px;
+    .eq-val {
+      width: 24px;
       text-align: right;
-      color: var(--text-main);
-      font-weight: 600;
+      color: #fff;
+      font-weight: 700;
     }
 
-    .bottleneck-box {
-      background: rgba(229, 68, 59, 0.1);
-      border: 1px solid rgba(229, 68, 59, 0.3);
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.25rem;
-      font-size: 0.85rem;
-    }
-
-    .bottleneck-box strong {
-      color: #ff6b6b;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+    /* Action Buttons */
+    .hud-actions {
+      display: flex;
+      flex-direction: column;
       gap: 0.75rem;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #0b0e14;
-      font-family: inherit;
+    .btn-action-primary {
+      background: linear-gradient(135deg, #e3af2d 0%, #D19C14 100%);
+      color: #080a0f;
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
+      font-size: 0.925rem;
       border: none;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      box-shadow: 0 4px 15px var(--accent-gold-glow);
       transition: all 0.2s ease;
-      text-decoration: none;
     }
 
-    .btn-primary:hover {
+    .btn-action-primary:hover {
       filter: brightness(1.1);
-      box-shadow: 0 4px 15px var(--accent-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(209, 156, 20, 0.4);
     }
 
-    .btn-secondary {
-      background: transparent;
+    .btn-action-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
       color: var(--text-main);
       font-family: inherit;
       font-weight: 600;
-      border: 1px solid var(--border);
-      padding: 0.65rem 1.25rem;
-      border-radius: 8px;
       font-size: 0.85rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -475,336 +667,443 @@
       transition: all 0.2s ease;
     }
 
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--text-muted);
+    .btn-action-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    /* Action Plan Section */
-    .plan-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 3rem;
+    /* 90-Day Protocol Section */
+    .protocol-section {
+      margin-top: 3.5rem;
     }
 
-    .plan-header {
-      margin-bottom: 1.5rem;
+    .section-title-wrap {
+      margin-bottom: 2rem;
     }
 
-    .plan-header h3 {
-      font-size: 1.4rem;
+    .section-title-wrap h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 700;
       color: #ffffff;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.5rem;
     }
 
-    .plan-grid {
+    .section-title-wrap p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .protocol-cards-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     @media (min-width: 768px) {
-      .plan-grid {
+      .protocol-cards-grid {
         grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    .plan-card {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
+    .protocol-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.65rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .plan-card-tag {
+    .protocol-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(209, 156, 20, 0.35);
+    }
+
+    .protocol-phase {
       font-size: 0.7rem;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 0.5rem;
-      color: var(--accent);
+      letter-spacing: 1.25px;
+      color: var(--accent-gold);
+      margin-bottom: 0.6rem;
     }
 
-    .plan-card h4 {
-      font-size: 1.05rem;
-      margin-bottom: 0.5rem;
-      color: #fff;
+    .protocol-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
     }
 
-    .plan-card p {
-      font-size: 0.85rem;
+    .protocol-card p {
+      font-size: 0.875rem;
       color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .protocol-tag {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Harm Reduction Callout Panel */
+    .harm-reduction-card {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(18, 23, 34, 0.9) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-top: 2rem;
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .warning-icon-wrap {
+      width: 44px;
+      height: 44px;
+      background: rgba(239, 68, 68, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .warning-content h4 {
+      color: #ff7675;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+      font-weight: 700;
+    }
+
+    .warning-content p {
+      color: #94a3b8;
+      font-size: 0.875rem;
       line-height: 1.5;
     }
 
-    /* Harm reduction warning box */
-    .danger-warning {
-      background: rgba(255, 71, 87, 0.08);
-      border-left: 4px solid var(--danger);
-      padding: 1rem 1.25rem;
-      border-radius: 0 8px 8px 0;
-      margin: 1.5rem 0;
-      font-size: 0.875rem;
-    }
-
-    .danger-warning h5 {
-      color: #ff6b81;
-      font-size: 0.95rem;
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .danger-warning p {
-      color: var(--text-muted);
-    }
-
-    footer {
-      background: #080a0f;
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      text-align: center;
-      margin-top: auto;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--accent);
-    }
-
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: var(--accent);
-      color: #0b0e14;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      font-weight: 600;
+      background: #D19C14;
+      color: #080a0f;
+      padding: 0.85rem 1.4rem;
+      border-radius: 10px;
+      font-weight: 700;
       font-size: 0.875rem;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
+      transform: translateY(15px);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
       z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .toast.show {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: #05070a;
+      border-top: 1px solid var(--border-subtle);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-nav a:hover {
+      color: var(--accent-gold);
+    }
   </style>
 </head>
 <body>
 
-  <div class="harm-reduction-banner">
-    <span>🛡️ <strong>Harm Reduction First:</strong> Evidence-led protocols only. Zero toleration for dangerous DIY procedures (hammer bonesmashing, illicit injectables).</span>
+  <!-- Ambient Light Orbs -->
+  <div class="ambient-bg">
+    <div class="ambient-orb-1"></div>
+    <div class="ambient-orb-2"></div>
   </div>
 
+  <!-- Safety / Medical First Banner -->
+  <div class="top-banner">
+    <span>🛡️ <strong>Harm Reduction First:</strong> Evidence-led dermatology and kinesiology only. Zero tolerance for dangerous memes (hammer bonesmashing, illicit injectables).</span>
+  </div>
+
+  <!-- Sticky Glassmorphic Header -->
   <header>
     <div class="header-inner">
       <a href="https://looksmaxxing.guide" class="logo">
-        <span>looksmaxxing.guide</span>
-        <span class="logo-badge">Tool</span>
+        <div class="logo-mark">L</div>
+        <div class="logo-text">looks<span>maxxing</span>.guide</div>
       </a>
-      <div class="nav-tagline">
-        Evidence-led, harm-reduction-oriented male aesthetics
+      <div class="header-badge">
+        Interactive Diagnostic Engine
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="hero-heading">
-      <h1>Calibrated <span>Looksmax Score</span> Calculator</h1>
-      <p>Rate yourself across the 6 core pillars from looksmaxxing.guide. Get your weighted 0–100 calibration, diagnose your bottleneck, and receive a safe 90-day protocol.</p>
+  <main>
+    <!-- Hero Title -->
+    <div class="hero-head">
+      <div class="eyebrow">✨ Calibration & Harm-Reduction Tool</div>
+      <h1>Calibrated <span>Looksmax Score</span> Engine</h1>
+      <p>Rate yourself across the 6 core pillars from looksmaxxing.guide. Compute your weighted percentile, diagnose your single highest-ROI bottleneck, and generate a safe 90-day action protocol.</p>
     </div>
 
-    <div class="calc-layout">
-      <!-- Sliders Column -->
-      <div class="sliders-card">
-        <div class="sliders-header">
-          <h2>Input Your Calibrated Self-Ratings (1–10)</h2>
-          <button class="reset-btn" id="resetBtn">Reset to Baseline</button>
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="preset-label">Quick Presets:</span>
+      <button class="preset-btn" data-preset="baseline">Average Baseline (6/10)</button>
+      <button class="preset-btn" data-preset="skin-lag">Skin & Grooming Lag</button>
+      <button class="preset-btn" data-preset="physique-plateau">Physique & Jaw Recomp</button>
+      <button class="preset-btn" data-preset="advanced">High Harmony (8/10)</button>
+    </div>
+
+    <!-- Main App Grid -->
+    <div class="calculator-grid">
+      
+      <!-- Input Panel -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>6-Pillar Calibration Sliders</span>
+          </div>
+          <span class="panel-badge">Weighted 0–100 Scale</span>
         </div>
 
         <!-- 1. Facial Harmony (25%) -->
-        <div class="category-group" data-key="harmony">
-          <div class="cat-meta">
-            <span class="cat-name">
+        <div class="pillar-row" data-key="harmony">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #D19C14; color: #D19C14;"></span>
               Facial Harmony
-              <span class="cat-weight">25% weight</span>
+              <span class="pillar-weight-tag">25% weight</span>
             </span>
-            <span class="cat-score-display" id="val-harmony">6</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-harmony">6</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-harmony" min="1" max="10" value="6" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-harmony" min="1" max="10" value="6" step="1" style="--track-color: #D19C14;">
           </div>
-          <div class="cat-descriptor" id="desc-harmony">Slight asymmetry, standard facial thirds, average orbital support.</div>
+          <div class="descriptor-box" id="desc-harmony" style="border-left-color: #D19C14;">Loading descriptor...</div>
         </div>
 
         <!-- 2. Physique & Fitness (20%) -->
-        <div class="category-group" data-key="physique">
-          <div class="cat-meta">
-            <span class="cat-name">
-              Physique & Fitness
-              <span class="cat-weight">20% weight</span>
+        <div class="pillar-row" data-key="physique">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #E5443B; color: #E5443B;"></span>
+              Physique & Body Comp
+              <span class="pillar-weight-tag">20% weight</span>
             </span>
-            <span class="cat-score-display" id="val-physique">6</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-physique">6</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-physique" min="1" max="10" value="6" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-physique" min="1" max="10" value="6" step="1" style="--track-color: #E5443B;">
           </div>
-          <div class="cat-descriptor" id="desc-physique">Moderate muscle tone, 16–19% body fat, decent posture.</div>
+          <div class="descriptor-box" id="desc-physique" style="border-left-color: #E5443B;">Loading descriptor...</div>
         </div>
 
         <!-- 3. Skin Quality (15%) -->
-        <div class="category-group" data-key="skin">
-          <div class="cat-meta">
-            <span class="cat-name">
-              Skin Quality
-              <span class="cat-weight">15% weight</span>
+        <div class="pillar-row" data-key="skin">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #16A085; color: #16A085;"></span>
+              Skin Quality & Clarity
+              <span class="pillar-weight-tag">15% weight</span>
             </span>
-            <span class="cat-score-display" id="val-skin">6</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-skin">5</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-skin" min="1" max="10" value="6" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-skin" min="1" max="10" value="5" step="1" style="--track-color: #16A085;">
           </div>
-          <div class="cat-descriptor" id="desc-skin">Occasional breakouts, slight post-inflammatory erythema, no daily SPF.</div>
+          <div class="descriptor-box" id="desc-skin" style="border-left-color: #16A085;">Loading descriptor...</div>
         </div>
 
-        <!-- 4. Hair & Hairline (15%) -->
-        <div class="category-group" data-key="hair">
-          <div class="cat-meta">
-            <span class="cat-name">
-              Hair & Hairline
-              <span class="cat-weight">15% weight</span>
+        <!-- 4. Hair & Density (15%) -->
+        <div class="pillar-row" data-key="hair">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #3498DB; color: #3498DB;"></span>
+              Hair & Hairline Health
+              <span class="pillar-weight-tag">15% weight</span>
             </span>
-            <span class="cat-score-display" id="val-hair">7</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-hair">7</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-hair" min="1" max="10" value="7" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-hair" min="1" max="10" value="7" step="1" style="--track-color: #3498DB;">
           </div>
-          <div class="cat-descriptor" id="desc-hair">Norwood 1–2 hairline, healthy density, cut suits facial shape well.</div>
+          <div class="descriptor-box" id="desc-hair" style="border-left-color: #3498DB;">Loading descriptor...</div>
         </div>
 
         <!-- 5. Grooming & Style (15%) -->
-        <div class="category-group" data-key="grooming">
-          <div class="cat-meta">
-            <span class="cat-name">
-              Grooming & Style
-              <span class="cat-weight">15% weight</span>
+        <div class="pillar-row" data-key="grooming">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #9B59B6; color: #9B59B6;"></span>
+              Grooming & Style Fit
+              <span class="pillar-weight-tag">15% weight</span>
             </span>
-            <span class="cat-score-display" id="val-grooming">6</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-grooming">6</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-grooming" min="1" max="10" value="6" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-grooming" min="1" max="10" value="6" step="1" style="--track-color: #9B59B6;">
           </div>
-          <div class="cat-descriptor" id="desc-grooming">Clean basic wardrobe, maintained facial hair, standard hygiene.</div>
+          <div class="descriptor-box" id="desc-grooming" style="border-left-color: #9B59B6;">Loading descriptor...</div>
         </div>
 
         <!-- 6. Jawline Definition (10%) -->
-        <div class="category-group" data-key="jawline">
-          <div class="cat-meta">
-            <span class="cat-name">
-              Jawline Definition
-              <span class="cat-weight">10% weight</span>
+        <div class="pillar-row" data-key="jawline">
+          <div class="pillar-meta">
+            <span class="pillar-title">
+              <span class="pillar-dot" style="background: #E67E22; color: #E67E22;"></span>
+              Jawline & Mandible Definition
+              <span class="pillar-weight-tag">10% weight</span>
             </span>
-            <span class="cat-score-display" id="val-jawline">6</span>
+            <div class="pillar-val-box">
+              <span class="pillar-val" id="val-jawline">6</span>
+              <span class="pillar-max">/10</span>
+            </div>
           </div>
-          <div class="slider-container">
-            <input type="range" id="range-jawline" min="1" max="10" value="6" step="1">
+          <div class="slider-wrap">
+            <input type="range" id="range-jawline" min="1" max="10" value="6" step="1" style="--track-color: #E67E22;">
           </div>
-          <div class="cat-descriptor" id="desc-jawline">Moderate mandibular angle definition visible in direct light; softening at rest.</div>
+          <div class="descriptor-box" id="desc-jawline" style="border-left-color: #E67E22;">Loading descriptor...</div>
         </div>
       </div>
 
-      <!-- Result Column -->
-      <div class="result-card">
-        <div style="text-align:center;">
-          <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Calibration Result</span>
+      <!-- Result HUD Column -->
+      <div class="hud-card">
+        <div class="hud-header">
+          <div class="hud-subtitle">Weighted Diagnostic Score</div>
         </div>
 
-        <div class="score-meter">
-          <svg class="radial-svg" viewBox="0 0 180 180">
-            <circle class="radial-bg" cx="90" cy="90" r="75"></circle>
-            <circle class="radial-progress" id="radialProgress" cx="90" cy="90" r="75"></circle>
+        <!-- Radial Gauge -->
+        <div class="radial-gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 200 200">
+            <circle class="gauge-bg" cx="100" cy="100" r="85"></circle>
+            <circle class="gauge-progress" id="gaugeProgress" cx="100" cy="100" r="85"></circle>
           </svg>
-          <div class="meter-text">
-            <div class="meter-value" id="totalScore">62</div>
-            <div class="meter-label">Out of 100</div>
+          <div class="gauge-center-data">
+            <div class="gauge-number" id="totalScore">61</div>
+            <div class="gauge-denominator">Out of 100</div>
           </div>
         </div>
 
         <div style="text-align: center;">
-          <div class="tier-badge" id="tierBadge">Tier: Above Average Baseline</div>
+          <div class="tier-pill" id="tierPill">Loading Tier...</div>
         </div>
 
-        <div class="bottleneck-box" id="bottleneckBox">
-          <strong>⚠️ Highest-ROI Bottleneck:</strong>
-          <span id="bottleneckDesc">Skin Quality is currently your lowest drag factor. 90-day topical protocol can add +4 to +8 net points.</span>
+        <!-- Detected Bottleneck Box -->
+        <div class="bottleneck-callout" id="bottleneckCallout">
+          <div class="bottleneck-label">
+            <span>⚡ Highest-ROI Bottleneck</span>
+          </div>
+          <div class="bottleneck-text" id="bottleneckText">
+            Analyzing limiting factors...
+          </div>
         </div>
 
-        <div class="breakdown-bars" id="breakdownBars">
-          <!-- Dynamically populated by JS -->
+        <!-- Pillar Equalizer Bars -->
+        <div class="equalizer-wrap" id="equalizerContainer">
+          <!-- Filled by JavaScript -->
         </div>
 
-        <div class="actions-grid">
-          <button class="btn-primary" id="copyBtn">
+        <!-- Action CTAs -->
+        <div class="hud-actions">
+          <button class="btn-action-primary" id="copyPlanBtn">
             📋 Copy 90-Day Protocol
           </button>
-          <button class="btn-secondary" id="shareBtn">
-            🔗 Share Calibration Link
+          <button class="btn-action-secondary" id="shareUrlBtn">
+            🔗 Share Calibration URL
           </button>
         </div>
       </div>
+
     </div>
 
-    <!-- Tailored Action Plan & Harm Reduction -->
-    <div class="plan-section">
-      <div class="plan-header">
-        <h3>Your Tailored 90-Day Protocol</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem;">Targeted intervention focusing on your identified bottlenecks, backed by dermatological and exercise science.</p>
+    <!-- 90-Day Action Plan Section -->
+    <div class="protocol-section">
+      <div class="section-title-wrap">
+        <h2>Your Tailored 90-Day Action Protocol</h2>
+        <p>Prioritized clinical and biomechanical interventions focusing directly on your identified bottlenecks.</p>
       </div>
 
-      <div class="plan-grid" id="planGrid">
-        <!-- Filled by JS -->
+      <div class="protocol-cards-grid" id="protocolCardsGrid">
+        <!-- Injected via JavaScript -->
       </div>
 
-      <div class="danger-warning">
-        <h5>⚠️ Critical Harm-Reduction Notice</h5>
-        <p>Do NOT fall for predatory internet lore. <strong>Bonesmashing</strong> (striking your jaw or zygomas with hammers or blunt objects) causes micro-fractures, nerve damage, and asymmetric fibrous malunion—never skeletal widening. Unregulated lipolytic injections (e.g. black-market Aqualyx) risk necrotic tissue damage and facial nerve palsy. Real looksmaxxing is boring, repeatable, evidence-backed discipline.</p>
+      <!-- Harm Reduction Warning -->
+      <div class="harm-reduction-card">
+        <div class="warning-icon-wrap">⚠️</div>
+        <div class="warning-content">
+          <h4>Clinical Harm Reduction Notice</h4>
+          <p>Viral internet lore frequently promotes dangerous shortcuts. <strong>Bonesmashing</strong> (striking the jaw, nose, or zygomas with hammers or blunt objects) causes micro-fractures, irreversible nerve numbness, and asymmetric fibrous malunion—never bone expansion. Unlicensed lipolytic injections (e.g. Aqualyx outside clinical supervision) carry severe necrosis and facial nerve palsy risks. Real looksmaxxing is predictable, evidence-backed discipline: daily broad-spectrum SPF, body recomposition, sleep hygiene, and professional tailoring.</p>
+        </div>
       </div>
     </div>
   </main>
 
   <footer>
-    <div class="footer-links">
+    <div class="footer-nav">
       <a href="https://looksmaxxing.guide/en/looks/">Looks</a>
       <a href="https://looksmaxxing.guide/en/fitness/">Fitness</a>
       <a href="https://looksmaxxing.guide/en/style/">Style</a>
       <a href="https://looksmaxxing.guide/en/looksmax-score/">Your Score</a>
       <a href="https://looksmaxxing.guide/en/legal/medical-disclaimer/">Medical Disclaimer</a>
     </div>
-    <p>© 2026 looksmaxxing.guide Companion Tool. Built for evidence-based self-improvement.</p>
+    <p>© 2026 looksmaxxing.guide Diagnostic Engine. Built for evidence-based self-improvement.</p>
   </footer>
 
   <div class="toast" id="toast">Copied to clipboard!</div>
@@ -821,11 +1120,20 @@
 
     const TITLES = {
       harmony: "Facial Harmony",
-      physique: "Physique & Fitness",
+      physique: "Physique & Body Comp",
       skin: "Skin Quality",
-      hair: "Hair & Hairline",
+      hair: "Hair & Density",
       grooming: "Grooming & Style",
       jawline: "Jawline Definition"
+    };
+
+    const COLORS = {
+      harmony: "#D19C14",
+      physique: "#E5443B",
+      skin: "#16A085",
+      hair: "#3498DB",
+      grooming: "#9B59B6",
+      jawline: "#E67E22"
     };
 
     const DESCRIPTORS = {
@@ -833,21 +1141,21 @@
         1: "Severe facial asymmetry, compromised dental bite, obstructed airway breathing.",
         3: "Noticeable asymmetry, weak chin projection, mouth-breathing posture.",
         5: "Standard facial balance, average thirds, non-model skeletal symmetry.",
-        7: "Good cheekbone projection, strong chin-to-philtrum ratio, balanced thirds.",
+        7: "Good cheekbone projection, balanced facial thirds, strong chin-to-philtrum ratio.",
         9: "Exceptional genetic facial harmony, strong zygomatic arch, optimal gonial angle."
       },
       physique: {
         1: "Sedentary, body fat >30% or severely underweight, poor spinal posture.",
-        3: "Low muscle mass, body fat 22–28%, rounded shoulders and anterior pelvic tilt.",
-        5: "Average athletic build, body fat 16–20%, consistent recreational training.",
+        3: "Low muscle mass, body fat 22–28%, rounded shoulders, anterior pelvic tilt.",
+        5: "Average athletic build, body fat 16–20%, consistent recreational resistance training.",
         7: "Visible abdominal definition at 12–15% body fat, balanced V-taper, upright posture.",
         9: "Elite athletic conditioning, 9–12% body fat, well-developed clavicular delts & lats."
       },
       skin: {
-        1: "Active inflammatory cystic acne, severe erythema, zero sunscreen habit.",
-        3: "Persistent blackheads/texture, irregular barrier, hyperpigmentation.",
+        1: "Active inflammatory cystic acne, severe erythema, zero daily sunscreen habit.",
+        3: "Persistent blackheads/texture, irregular moisture barrier, hyperpigmentation.",
         5: "Occasional breakouts, basic cleanser/moisturizer usage, minimal sun protection.",
-        7: "Smooth texture, rare breakouts, daily broad-spectrum SPF50 & niacinamide.",
+        7: "Smooth texture, rare breakouts, disciplined daily broad-spectrum SPF 50 & niacinamide.",
         9: "Glass-like clarity, optimal hydration barrier, disciplined prescription retinoid routine."
       },
       hair: {
@@ -867,7 +1175,7 @@
       jawline: {
         1: "Recessed mandible obscured by soft tissue / submental fat.",
         3: "Double chin at rest, weak jawline separation from neck.",
-        5: "Noticeable jaw angle when flexing, softened by normal 18% body fat.",
+        5: "Noticeable jaw angle when flexing, softened by standard 18% body fat.",
         7: "Crisp mandibular border visible from front and profile; submental tightness.",
         9: "Razor-sharp jawline, visible masseter definition, tight hyoid bone engagement."
       }
@@ -875,35 +1183,48 @@
 
     const PROTOCOLS = {
       skin: {
-        tag: "Highest ROI (90 Days)",
-        title: "Topical Skin Optimization",
-        desc: "Add Daily Broad-Spectrum SPF 50+ every morning. Introduce 0.025% Tretinoin (or 0.1% Adapalene) 3 nights/week over moisturizer. Hydrate with ceramide barrier cream."
+        phase: "Phase 1: High-Speed ROI (Weeks 1–4)",
+        title: "Topical Barrier & Retinoid Protocol",
+        desc: "Apply Broad-Spectrum SPF 50+ every single morning without fail. At night, introduce 0.025% Tretinoin (or 0.1% Adapalene) 3 nights per week over a ceramide barrier cream. Drink 3L water and reduce high-glycemic dairy.",
+        tag: "Dermatological Science"
       },
       physique: {
-        tag: "Body Composition",
-        title: "Body Recomp & Posture Realignment",
-        desc: "Target 12–15% body fat via a modest 300 kcal deficit with 1.8g/kg protein. Fix anterior head posture with chin tucks and daily dead hangs for clavicular expansion."
+        phase: "Phase 2: Body Recomposition (Weeks 1–12)",
+        title: "Body Fat Reduction & Clavicular Width",
+        desc: "Sustain a modest 300 kcal deficit with 1.8g protein per kg. Focus training on lateral raises, weighted pullups, and incline press for upper clavicular V-taper. Perform daily dead hangs to decompress posture.",
+        tag: "Kinesiology & Nutrition"
       },
       jawline: {
-        tag: "Submental Tightness",
-        title: "Fat Reduction & Hyoid Posture",
-        desc: "Jawline is 80% body fat percentage, 20% bone. Do NOT smash your face with hammers. Maintain proper tongue posture (mewing: entire tongue on roof of palate) and drop systemic water retention."
+        phase: "Phase 1: Submental Tightness (Weeks 1–6)",
+        title: "Body Fat Leaning & Tongue Posture",
+        desc: "Jawline visibility is 80% body fat percentage. Do NOT strike bones with blunt instruments. Maintain continuous proper tongue posture (entire tongue suctioned against roof of mouth) and eliminate sodium bloat.",
+        tag: "Harm Reduction & Posture"
       },
       hair: {
-        tag: "Hairline Defense",
-        title: "Evidence-Based Follicle Defense",
-        desc: "Consult a dermatologist regarding DHT-blockers (Finasteride 1mg) if receding. Use a sulfate-free clarifying shampoo, rosemary oil/ketoconazole 2% for scalp health."
+        phase: "Phase 2: Follicle Preservation (Weeks 4–12)",
+        title: "Clinical DHT Defense & Scalp Health",
+        desc: "If receding, consult a board-certified dermatologist regarding Finasteride 1mg to halt 5-alpha reductase. Cleanse scalp with 2% Ketoconazole shampoo twice weekly. Get a textured crop or taper fade matching jaw width.",
+        tag: "Trichology & Barbering"
       },
       grooming: {
-        tag: "Instant Leverage",
-        title: "Silhouette & Dental Polish",
-        desc: "Switch to tailored neutral basics (crew cuts, structured shoulders). Whiten teeth with safe 10% hydrogen peroxide strips. Keep facial hair faded on cheeks and defined at neck."
+        phase: "Phase 1: Immediate Leverage (Day 1–14)",
+        title: "Wardrobe Geometry & Dental Polish",
+        desc: "Replace loose graphic clothing with structured neutral heavyweight basics. Whiten teeth using 10% hydrogen peroxide strips. Keep cheek stubble lined up with a single-blade razor and moisturize the neck.",
+        tag: "Style & Grooming"
       },
       harmony: {
-        tag: "Proportions",
-        title: "Softmaxxing Proportions",
-        desc: "You cannot change bone structure safely without orthognathic surgery. Maximize perceived harmony with eyebrow grooming (darker, straight shape), beard framing, and optimal lighting."
+        phase: "Phase 3: Perceived Proportions (Weeks 6–12)",
+        title: "Eyebrow & Facial Framing Optimization",
+        desc: "Bone structure cannot be safely altered non-surgically. Maximize perceived symmetry: tweeze the glabella to set optical interpupillary distance, darken thin eyebrows with castor oil/tint, and trim beard to square out chin projection.",
+        tag: "Aesthetic Proportions"
       }
+    };
+
+    const PRESETS = {
+      baseline: { harmony: 6, physique: 6, skin: 6, hair: 6, grooming: 6, jawline: 6 },
+      "skin-lag": { harmony: 7, physique: 7, skin: 3, hair: 7, grooming: 4, jawline: 6 },
+      "physique-plateau": { harmony: 7, physique: 4, skin: 7, hair: 6, grooming: 6, jawline: 4 },
+      advanced: { harmony: 8, physique: 8, skin: 8, hair: 8, grooming: 8, jawline: 8 }
     };
 
     function getDescriptor(key, val) {
@@ -913,6 +1234,14 @@
       if (val <= 6) return scale[5];
       if (val <= 8) return scale[7];
       return scale[9];
+    }
+
+    function updateTrackGradient(input, color) {
+      const min = input.min || 1;
+      const max = input.max || 10;
+      const val = input.value;
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${pct}%, var(--bg-input) ${pct}%, var(--bg-input) 100%)`;
     }
 
     function calculate() {
@@ -929,6 +1258,7 @@
 
         document.getElementById(`val-${key}`).textContent = val;
         document.getElementById(`desc-${key}`).textContent = getDescriptor(key, val);
+        updateTrackGradient(input, COLORS[key]);
 
         if (val < lowestScore) {
           lowestScore = val;
@@ -939,119 +1269,128 @@
       const finalScore = Math.round(total);
       document.getElementById('totalScore').textContent = finalScore;
 
-      // Radial meter (circumference = 2 * PI * 75 = 471.2)
-      const circle = document.getElementById('radialProgress');
-      const circumference = 2 * Math.PI * 75;
+      // Radial Gauge Circumference: 2 * PI * 85 = 534.07
+      const circumference = 2 * Math.PI * 85;
       const offset = circumference - (finalScore / 100) * circumference;
+      const circle = document.getElementById('gaugeProgress');
       circle.style.strokeDasharray = `${circumference}`;
       circle.style.strokeDashoffset = offset;
 
-      // Color tier
-      const badge = document.getElementById('tierBadge');
+      // Tier Badge & Color
+      const pill = document.getElementById('tierPill');
       if (finalScore < 50) {
-        badge.textContent = "Tier: Foundational Softmaxxing Needed";
-        badge.style.color = "var(--danger)";
-        badge.style.borderColor = "rgba(255, 71, 87, 0.4)";
+        pill.textContent = "Tier 1: Foundational Softmaxxing Needed";
+        pill.style.background = "rgba(239, 68, 68, 0.12)";
+        pill.style.color = "var(--danger)";
+        pill.style.borderColor = "rgba(239, 68, 68, 0.35)";
         circle.style.stroke = "var(--danger)";
       } else if (finalScore < 75) {
-        badge.textContent = "Tier: Solid Baseline — High Recomp Potential";
-        badge.style.color = "var(--accent)";
-        badge.style.borderColor = "rgba(209, 156, 20, 0.4)";
-        circle.style.stroke = "var(--accent)";
+        pill.textContent = "Tier 2: Solid Baseline — High Recomp Potential";
+        pill.style.background = "rgba(209, 156, 20, 0.12)";
+        pill.style.color = "var(--accent-gold)";
+        pill.style.borderColor = "rgba(209, 156, 20, 0.35)";
+        circle.style.stroke = "var(--accent-gold)";
       } else {
-        badge.textContent = "Tier: Top Calibrated Tier — Shift Focus to Non-Aesthetic";
-        badge.style.color = "var(--success)";
-        badge.style.borderColor = "rgba(46, 213, 115, 0.4)";
+        pill.textContent = "Tier 3: Optimized Tier — Shift to Non-Aesthetic Pillars";
+        pill.style.background = "rgba(16, 185, 129, 0.12)";
+        pill.style.color = "var(--success)";
+        pill.style.borderColor = "rgba(16, 185, 129, 0.35)";
         circle.style.stroke = "var(--success)";
       }
 
-      // Bottleneck box
-      const bottleneckBox = document.getElementById('bottleneckBox');
-      const bottleneckDesc = document.getElementById('bottleneckDesc');
-      bottleneckDesc.innerHTML = `<strong>${TITLES[lowestKey]} (${scores[lowestKey]}/10)</strong> is your biggest limiting factor. Prioritize this in your 90-day sprint for the largest jump in overall harmony.`;
+      // Bottleneck Alert
+      const bottleneckText = document.getElementById('bottleneckText');
+      bottleneckText.innerHTML = `<strong>${TITLES[lowestKey]} (${scores[lowestKey]}/10)</strong> is currently your single biggest drag factor. A targeted 90-day intervention here delivers the highest return per hour spent.`;
 
-      // Breakdown bars
-      const barsContainer = document.getElementById('breakdownBars');
-      barsContainer.innerHTML = '';
+      // Equalizer bars
+      const eqContainer = document.getElementById('equalizerContainer');
+      eqContainer.innerHTML = '';
       for (const key in WEIGHTS) {
         const row = document.createElement('div');
-        row.className = 'bar-row';
+        row.className = 'eq-row';
         row.innerHTML = `
-          <span class="bar-label">${TITLES[key]}</span>
-          <div class="bar-track">
-            <div class="bar-fill" style="width: ${scores[key] * 10}%; ${key === lowestKey ? 'background: #ff6b6b;' : ''}"></div>
+          <span class="eq-name">${TITLES[key]}</span>
+          <div class="eq-track">
+            <div class="eq-fill" style="width: ${scores[key] * 10}%; background: ${COLORS[key]};"></div>
           </div>
-          <span class="bar-val">${scores[key]}</span>
+          <span class="eq-val">${scores[key]}</span>
         `;
-        barsContainer.appendChild(row);
+        eqContainer.appendChild(row);
       }
 
-      // Protocols grid (top 3 priorities: lowest, 2nd lowest, 3rd lowest)
+      // Protocol Cards: Top 3 lowest priorities
       const sortedKeys = Object.keys(scores).sort((a, b) => scores[a] - scores[b]);
-      const planGrid = document.getElementById('planGrid');
-      planGrid.innerHTML = '';
+      const cardsGrid = document.getElementById('protocolCardsGrid');
+      cardsGrid.innerHTML = '';
       for (let i = 0; i < 3; i++) {
         const k = sortedKeys[i];
         const p = PROTOCOLS[k];
         const card = document.createElement('div');
-        card.className = 'plan-card';
+        card.className = 'protocol-card';
         card.innerHTML = `
-          <div class="plan-card-tag">${p.tag} · ${TITLES[k]}</div>
-          <h4>${p.title}</h4>
+          <div class="protocol-phase">${p.phase}</div>
+          <h3>${p.title}</h3>
           <p>${p.desc}</p>
+          <div class="protocol-tag">
+            <span>🏷️</span> ${p.tag} · ${TITLES[k]} (${scores[k]}/10)
+          </div>
         `;
-        planGrid.appendChild(card);
+        cardsGrid.appendChild(card);
       }
     }
 
-    // Attach listeners
+    // Attach slider listeners
     for (const key in WEIGHTS) {
-      document.getElementById(`range-${key}`).addEventListener('input', calculate);
+      const slider = document.getElementById(`range-${key}`);
+      slider.addEventListener('input', calculate);
     }
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      document.getElementById('range-harmony').value = 6;
-      document.getElementById('range-physique').value = 6;
-      document.getElementById('range-skin').value = 6;
-      document.getElementById('range-hair').value = 7;
-      document.getElementById('range-grooming').value = 6;
-      document.getElementById('range-jawline').value = 6;
-      calculate();
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const p = PRESETS[btn.dataset.preset];
+        if (p) {
+          for (const k in p) {
+            document.getElementById(`range-${k}`).value = p[k];
+          }
+          calculate();
+        }
+      });
     });
 
-    // Copy action plan
-    document.getElementById('copyBtn').addEventListener('click', () => {
+    // Copy Action Plan
+    document.getElementById('copyPlanBtn').addEventListener('click', () => {
       const score = document.getElementById('totalScore').textContent;
-      const tier = document.getElementById('tierBadge').textContent;
-      let text = `=== LOOKSMAXXING.GUIDE CALIBRATION RESULT ===\n`;
-      text += `Total Score: ${score}/100 (${tier})\n\n`;
-      text += `Pillar Ratings:\n`;
+      const tier = document.getElementById('tierPill').textContent;
+      let text = `=== LOOKSMAXXING.GUIDE 6-PILLAR ASSESSMENT ===\n`;
+      text += `Total Score: ${score}/100 | ${tier}\n\n`;
+      text += `Pillar Calibration:\n`;
       for (const k in WEIGHTS) {
         const val = document.getElementById(`range-${k}`).value;
-        text += `- ${TITLES[k]}: ${val}/10 (${Math.round(WEIGHTS[k]*100)}% weight)\n`;
+        text += `• ${TITLES[k]}: ${val}/10 (${Math.round(WEIGHTS[k]*100)}% weight)\n`;
       }
-      text += `\n90-Day Priority Action Plan:\n`;
-      const cards = document.querySelectorAll('.plan-card');
-      cards.forEach(c => {
-        text += `• ${c.querySelector('h4').textContent}: ${c.querySelector('p').textContent}\n`;
+      text += `\nPrioritized 90-Day Protocol:\n`;
+      document.querySelectorAll('.protocol-card').forEach(c => {
+        text += `- ${c.querySelector('h3').textContent}: ${c.querySelector('p').textContent}\n`;
       });
-      text += `\nHarm Reduction: Evidence-based softmaxxing only. Zero DIY bonesmashing or unlicensed injectables.\n`;
-      text += `Calculated at: https://blxrryfxce17.github.io/looksmax-score-calculator/`;
+      text += `\nCalculated at: https://blxrryfxce17.github.io/looksmax-score-calculator/`;
 
       navigator.clipboard.writeText(text).then(() => {
-        showToast("Action protocol copied to clipboard!");
+        showToast("Protocol copied to clipboard!");
       });
     });
 
-    // Share link
-    document.getElementById('shareBtn').addEventListener('click', () => {
+    // Share URL
+    document.getElementById('shareUrlBtn').addEventListener('click', () => {
       const params = new URLSearchParams();
       for (const k in WEIGHTS) {
         params.set(k, document.getElementById(`range-${k}`).value);
       }
       const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
       navigator.clipboard.writeText(url).then(() => {
-        showToast("Calibration link copied to clipboard!");
+        showToast("Calibration link copied!");
       });
     });
 
@@ -1059,17 +1398,19 @@
       const toast = document.getElementById('toast');
       toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+      setTimeout(() => toast.classList.remove('show'), 2600);
     }
 
-    // Read URL params on load if present
+    // Initialize from URL params or default
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
+      let found = false;
       for (const k in WEIGHTS) {
         if (params.has(k)) {
           const val = parseInt(params.get(k), 10);
           if (val >= 1 && val <= 10) {
             document.getElementById(`range-${k}`).value = val;
+            found = true;
           }
         }
       }
