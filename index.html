@@ -1075,9 +1075,15 @@
 
     <!-- 90-Day Action Plan Section -->
     <div class="protocol-section">
-      <div class="section-title-wrap">
-        <h2>Your Tailored 90-Day Action Protocol</h2>
-        <p>Prioritized clinical and biomechanical interventions focusing directly on your identified bottlenecks.</p>
+      <div class="section-title-wrap" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2>Your Tailored 90-Day Action Protocol</h2>
+          <p>Prioritized clinical, dermatological, and biomechanical interventions mapped across your pillars.</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; background: var(--bg-card); padding: 0.3rem; border-radius: 10px; border: 1px solid var(--border-subtle);">
+          <button class="proto-filter-btn" id="filterAllBtn" style="background: var(--accent-gold); color: #080a0f; border: none; padding: 0.4rem 0.85rem; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">All 6 Pillars</button>
+          <button class="proto-filter-btn" id="filterBottlenecksBtn" style="background: transparent; color: var(--text-muted); border: none; padding: 0.4rem 0.85rem; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Top 3 Bottlenecks</button>
+        </div>
       </div>
 
       <div class="protocol-cards-grid" id="protocolCardsGrid">
@@ -1318,25 +1324,68 @@
         eqContainer.appendChild(row);
       }
 
-      // Protocol Cards: Top 3 lowest priorities
-      const sortedKeys = Object.keys(scores).sort((a, b) => scores[a] - scores[b]);
-      const cardsGrid = document.getElementById('protocolCardsGrid');
-      cardsGrid.innerHTML = '';
-      for (let i = 0; i < 3; i++) {
-        const k = sortedKeys[i];
-        const p = PROTOCOLS[k];
-        const card = document.createElement('div');
-        card.className = 'protocol-card';
-        card.innerHTML = `
-          <div class="protocol-phase">${p.phase}</div>
-          <h3>${p.title}</h3>
-          <p>${p.desc}</p>
-          <div class="protocol-tag">
-            <span>🏷️</span> ${p.tag} · ${TITLES[k]} (${scores[k]}/10)
-          </div>
-        `;
-        cardsGrid.appendChild(card);
+      // Protocol Cards Rendering
+      let currentProtocolFilter = 'all';
+      
+      function renderProtocols() {
+        const sortedKeys = Object.keys(scores).sort((a, b) => scores[a] - scores[b]);
+        const count = currentProtocolFilter === 'bottlenecks' ? 3 : 6;
+        const keysToRender = sortedKeys.slice(0, count);
+        
+        const cardsGrid = document.getElementById('protocolCardsGrid');
+        cardsGrid.innerHTML = '';
+        
+        keysToRender.forEach((k, index) => {
+          const p = PROTOCOLS[k];
+          const isBottleneck = index < 3;
+          let priorityBadge = '';
+          if (index === 0) {
+            priorityBadge = `<span style="background: rgba(239, 68, 68, 0.18); color: #ff7675; border: 1px solid rgba(239, 68, 68, 0.35); font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">🔥 #1 Bottleneck Priority</span>`;
+          } else if (index < 3) {
+            priorityBadge = `<span style="background: rgba(209, 156, 20, 0.18); color: #f1c40f; border: 1px solid rgba(209, 156, 20, 0.35); font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">⚡ Priority Focus #${index + 1}</span>`;
+          } else {
+            priorityBadge = `<span style="background: rgba(46, 213, 115, 0.12); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.3); font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">✨ Optimization & Defense</span>`;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'protocol-card';
+          card.style.borderLeft = `3px solid ${COLORS[k]}`;
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.4rem;">
+              <div class="protocol-phase" style="margin-bottom: 0;">${p.phase}</div>
+              ${priorityBadge}
+            </div>
+            <h3>${p.title}</h3>
+            <p>${p.desc}</p>
+            <div class="protocol-tag">
+              <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${COLORS[k]};"></span>
+              ${p.tag} · ${TITLES[k]} (${scores[k]}/10)
+            </div>
+          `;
+          cardsGrid.appendChild(card);
+        });
       }
+
+      renderProtocols();
+
+      // Filter button handlers
+      document.getElementById('filterAllBtn').onclick = () => {
+        currentProtocolFilter = 'all';
+        document.getElementById('filterAllBtn').style.background = 'var(--accent-gold)';
+        document.getElementById('filterAllBtn').style.color = '#080a0f';
+        document.getElementById('filterBottlenecksBtn').style.background = 'transparent';
+        document.getElementById('filterBottlenecksBtn').style.color = 'var(--text-muted)';
+        renderProtocols();
+      };
+
+      document.getElementById('filterBottlenecksBtn').onclick = () => {
+        currentProtocolFilter = 'bottlenecks';
+        document.getElementById('filterBottlenecksBtn').style.background = 'var(--accent-gold)';
+        document.getElementById('filterBottlenecksBtn').style.color = '#080a0f';
+        document.getElementById('filterAllBtn').style.background = 'transparent';
+        document.getElementById('filterAllBtn').style.color = 'var(--text-muted)';
+        renderProtocols();
+      };
     }
 
     // Attach slider listeners
@@ -1371,14 +1420,21 @@
         const val = document.getElementById(`range-${k}`).value;
         text += `• ${TITLES[k]}: ${val}/10 (${Math.round(WEIGHTS[k]*100)}% weight)\n`;
       }
-      text += `\nPrioritized 90-Day Protocol:\n`;
-      document.querySelectorAll('.protocol-card').forEach(c => {
-        text += `- ${c.querySelector('h3').textContent}: ${c.querySelector('p').textContent}\n`;
+      text += `\nTailored 90-Day Protocol (All 6 Pillars):\n`;
+      const sorted = Object.keys(WEIGHTS).sort((a, b) => {
+        return parseInt(document.getElementById(`range-${a}`).value, 10) - parseInt(document.getElementById(`range-${b}`).value, 10);
       });
-      text += `\nCalculated at: https://blxrryfxce17.github.io/looksmax-score-calculator/`;
+      sorted.forEach((k, idx) => {
+        const p = PROTOCOLS[k];
+        const val = document.getElementById(`range-${k}`).value;
+        const rank = idx === 0 ? "🔥 #1 BOTTLENECK" : (idx < 3 ? `⚡ PRIORITY #${idx+1}` : "✨ MAINTENANCE");
+        text += `[${rank}] ${TITLES[k]} (${val}/10) — ${p.title}\n`;
+        text += `   ${p.desc}\n\n`;
+      });
+      text += `Calculated at: https://blxrryfxce17.github.io/looksmax-score-calculator/`;
 
       navigator.clipboard.writeText(text).then(() => {
-        showToast("Protocol copied to clipboard!");
+        showToast("Complete 6-pillar protocol copied!");
       });
     });
 
